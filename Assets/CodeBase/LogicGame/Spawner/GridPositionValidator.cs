@@ -9,8 +9,8 @@ public class GridPositionValidator : IPositionValidator
         _gridManager = gridManager;
     }
 
-    public bool ValidMove( Transform tetrominoTransform )
+    public bool ValidMove( Transform tetrominoTransform,Vector3 direction )
     {
-        return _gridManager.ValidMove ( tetrominoTransform );
+        return _gridManager.ValidMove ( tetrominoTransform, direction );
     }
 }

@@ -10,33 +10,35 @@
         private Spawner spawner;
         private TetrisGridManager tetrisGridManager;
 
-        private void Awake( )
+    private void Awake( )
+    {
+        // Создаем экземпляры из префабов
+        uiManager = Instantiate ( uiManagerPrefab , transform ).GetComponent<UiManager> ();
+        tetrisGridManager = Instantiate ( tetrisGridManagerPrefab ).GetComponent<TetrisGridManager> ();
+        spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
+
+        
+
+        // Инициализация спаунера через сервисы
+        var tetrominoFactory = AllServices.Container.Single<ITetrominoFactory> ();
+        var positionValidator = AllServices.Container.Single<IPositionValidator> ();
+        var rotationManager = AllServices.Container.Single<IRotationManager> ();
+
+        // Проверка зависимостей
+        if ( tetrominoFactory == null || positionValidator == null || rotationManager == null )
         {
-            // Создаем экземпляры из префабов
-            uiManager = Instantiate ( uiManagerPrefab , transform ).GetComponent<UiManager> ();
-            tetrisGridManager = Instantiate ( tetrisGridManagerPrefab ).GetComponent<TetrisGridManager> ();
-            spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
-
-
-            // Инициализация спаунера через сервисы
-            var tetrominoFactory = AllServices.Container.Single<ITetrominoFactory> ();
-            var positionValidator = AllServices.Container.Single<IPositionValidator> ();
-            var rotationManager = AllServices.Container.Single<IRotationManager> ();
-
-            // Проверка зависимостей
-            if ( tetrominoFactory == null || positionValidator == null || rotationManager == null )
-            {
-                Debug.LogError ( "Одна или несколько зависимостей не инициализированы!" );
-                return;
-            }
-
-            spawner.Initialize ( tetrominoFactory , positionValidator , rotationManager );
-            GameStart ();
+            Debug.LogError ( "Одна или несколько зависимостей не инициализированы!" );
+            return;
         }
 
+        spawner.Initialize ( tetrominoFactory , positionValidator , rotationManager );
+        GameStart ();
+    }
 
 
-        public void GameOver( )
+
+
+    public void GameOver( )
         {
             Debug.Log ( "GameOver" );
             Time.timeScale = 0f; // Останавливаем все процессы

@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public interface IBlockMover :IService
 {
-    void Move( Vector3 direction , Transform tetrisBlock );
-    bool ValidMove( Transform tetrisBlock ); // Добавлено
+    IEnumerator Move( Vector3 direction , Transform tetrisBlock );
+    bool ValidMove( Transform tetrisBlock ,Vector3 direction); // Добавлено
 }

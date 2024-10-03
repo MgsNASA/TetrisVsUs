@@ -2,11 +2,38 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    private static Spawner _instance;  // Статическая переменная для хранения единственного экземпляра
     private ITetrominoFactory _tetrominoFactory;
     private IPositionValidator _positionValidator;
     private IRotationManager _rotationManager;
     private Vector3 lastSpawnPosition;
     public int maxSpawnShift = 4;
+
+    // Свойство для доступа к экземпляру синглтона
+    public static Spawner Instance
+    {
+        get
+        {
+            if ( _instance == null )
+            {
+                Debug.LogError ( "Spawner instance не инициализирован! Убедитесь, что объект Spawner существует в сцене." );
+            }
+            return _instance;
+        }
+    }
+
+    private void Awake( )
+    {
+        // Проверяем, есть ли уже экземпляр
+        if ( _instance != null && _instance != this )
+        {
+            Destroy ( gameObject );  // Удаляем дубликат
+            return;
+        }
+
+        _instance = this;  // Устанавливаем экземпляр
+        DontDestroyOnLoad ( gameObject );  // Сохраняем объект между сценами
+    }
 
     // Метод для инициализации через зависимости
     public void Initialize( ITetrominoFactory tetrominoFactory , IPositionValidator positionValidator , IRotationManager rotationManager )
@@ -34,7 +61,8 @@ public class Spawner : MonoBehaviour
                 return;
             }
 
-            if ( _positionValidator.ValidMove ( newTetromino.transform ) )
+            // Добавляем направление движения (вниз)
+            if ( _positionValidator.ValidMove ( newTetromino.transform , Vector3.down ) )
             {
                 lastSpawnPosition = spawnPosition;
                 return;

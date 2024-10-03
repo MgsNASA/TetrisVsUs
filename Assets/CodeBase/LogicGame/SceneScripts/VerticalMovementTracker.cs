@@ -6,6 +6,10 @@ public class VerticalMovementTracker : MonoBehaviour
     public TextMeshProUGUI textMeshProUGUI; // Ссылка на компонент TextMeshPro
     public GameObject player;
 
+    public void Awake( )
+    {
+        player = GameObject.Find ( "Player(Clone)" );
+    }
     private void Update( )
     {
         // Отслеживаем текущее положение игрока по оси Y

@@ -2,17 +2,18 @@
 
 public class GridOperations : IGridManager
 {
-    private Transform [ , ] grid;
-    private int width;
-    private int height;
-    private BlockFallAnimator fallAnimator;
+    private Transform [ , ] grid;  // Двумерный массив для хранения блоков
+    private int width;  // Ширина сетки
+    private int height;  // Высота сетки
+    private BlockFallAnimator fallAnimator;  // Аниматор падения блока
+    private Vector2 gridOffset;  // Смещение для сетки
 
-    public GridOperations( int width , int height )
+    public GridOperations( int width , int height , Vector2 offset )
     {
         this.width = width;
         this.height = height;
-        grid = new Transform [ width , height ];
-       
+        grid = new Transform [ width , height ];  // Инициализация массива для блоков
+        this.gridOffset = offset;  // Сохраняем смещение
     }
 
     // Добавление блока в сетку
@@ -20,8 +21,8 @@ public class GridOperations : IGridManager
     {
         foreach ( Transform child in tetrisBlock )
         {
-            int roundedX = Mathf.RoundToInt ( child.position.x );
-            int roundedY = Mathf.RoundToInt ( child.position.y );
+            int roundedX = Mathf.RoundToInt ( child.position.x - gridOffset.x );
+            int roundedY = Mathf.RoundToInt ( child.position.y - gridOffset.y );
 
             if ( IsWithinBounds ( roundedX , roundedY ) )
             {
@@ -29,31 +30,50 @@ public class GridOperations : IGridManager
             }
         }
 
-        CheckForLines ();
+        CheckForLines ();  // Проверка на наличие полных линий
     }
 
-    public bool ValidMove( Transform tetrisBlock )
+    public bool ValidMove( Transform tetrisBlock , Vector3 direction )
     {
         foreach ( Transform child in tetrisBlock )
         {
-            int roundedX = Mathf.RoundToInt ( child.position.x );
-            int roundedY = Mathf.RoundToInt ( child.position.y );
+            Vector3 newPosition = child.position + direction;  // Рассчитываем новую позицию
+            int roundedX = Mathf.RoundToInt ( newPosition.x - gridOffset.x );
+            int roundedY = Mathf.RoundToInt ( newPosition.y - gridOffset.y );
 
-            // Проверка на выход за границы сетки
             if ( !IsWithinBounds ( roundedX , roundedY ) )
             {
+                Debug.Log ( "NotMoving for Grid" );
                 return false;
             }
 
-            // Проверка, не занята ли эта клетка другим блоком
             if ( grid [ roundedX , roundedY ] != null )
             {
+                Debug.Log ( "NotMoving for Block" );
                 return false;
             }
         }
         return true;
     }
 
+
+    // Отрисовка сетки
+    public void DrawGrid( Vector3 offset )
+    {
+        Gizmos.color = Color.green;
+
+        // Рисуем вертикальные линии
+        for ( int x = 0; x <= width; x++ )
+        {
+            Gizmos.DrawLine ( new Vector3 ( x , 0 , 0 ) + offset , new Vector3 ( x , height , 0 ) + offset );
+        }
+
+        // Рисуем горизонтальные линии
+        for ( int y = 0; y <= height; y++ )
+        {
+            Gizmos.DrawLine ( new Vector3 ( 0 , y , 0 ) + offset , new Vector3 ( width , y , 0 ) + offset );
+        }
+    }
 
     // Проверка на полные линии
     public void CheckForLines( )
@@ -64,7 +84,7 @@ public class GridOperations : IGridManager
             {
                 DeleteLine ( y );
                 MoveLinesDown ( y );
-                y--; // Проверяем ту же линию повторно после сдвига
+                y--;  // Проверяем ту же линию повторно после сдвига
             }
         }
     }
@@ -76,10 +96,10 @@ public class GridOperations : IGridManager
         {
             if ( grid [ x , y ] == null )
             {
-                return false;
+                return false;  // Линия не полная
             }
         }
-        return true;
+        return true;  // Линия полная
     }
 
     // Удаление полной линии
@@ -89,8 +109,8 @@ public class GridOperations : IGridManager
         {
             if ( grid [ x , y ] != null )
             {
-                GameObject.Destroy ( grid [ x , y ].gameObject );
-                grid [ x , y ] = null;
+                GameObject.Destroy ( grid [ x , y ].gameObject );  // Удаление блока
+                grid [ x , y ] = null;  // Освобождение клетки в сетке
             }
         }
     }
@@ -115,8 +135,8 @@ public class GridOperations : IGridManager
                     if ( fallDistance > 0 )
                     {
                         Transform block = grid [ x , y ];
-                        grid [ x , y - fallDistance ] = block;
-                        grid [ x , y ] = null;
+                        grid [ x , y - fallDistance ] = block;  // Перемещение блока вниз
+                        grid [ x , y ] = null;  // Освобождение клетки в сетке
 
                         BlockFall ( block , fallDistance );  // Используем анимацию падения
                     }
@@ -128,13 +148,12 @@ public class GridOperations : IGridManager
     // Метод для анимации падения блока
     private void BlockFall( Transform block , int fallDistance )
     {
-        Debug.Log ("ASDSA");
         if ( fallAnimator != null )
         {
             MonoBehaviour rootMono = block.GetComponentInParent<MonoBehaviour> ();
             if ( rootMono != null )
             {
-                rootMono.StartCoroutine ( fallAnimator.AnimateBlockFall ( block , fallDistance ) );
+                rootMono.StartCoroutine ( fallAnimator.AnimateBlockFall ( block , fallDistance ) );  // Запуск анимации
             }
         }
     }
@@ -142,6 +161,6 @@ public class GridOperations : IGridManager
     // Проверка, что координаты внутри сетки
     private bool IsWithinBounds( int x , int y )
     {
-        return x >= 0 && x < width && y >= 0 && y < height;
+        return x >= 0 && x < width && y >= 0 && y < height;  // Проверка границ
     }
 }

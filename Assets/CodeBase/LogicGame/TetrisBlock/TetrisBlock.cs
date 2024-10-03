@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class TetrisBlock : MonoBehaviour
@@ -6,8 +7,7 @@ public class TetrisBlock : MonoBehaviour
     {
         get; private set;
     }
-    private float previousTime;
-    private float fallTime = 0.8f;
+    private float fallTime = 0; // Время между падениями
 
     public event System.Action OnBlockStopped;
     public event System.Action OnNewTetrominoRequested;
@@ -15,30 +15,22 @@ public class TetrisBlock : MonoBehaviour
     private IBlockMover blockMover;
     private IBlockRotator blockRotator;
 
-    public TetrisBlock( IBlockMover blockMover , IBlockRotator blockRotator )
-    {
-        this.blockMover = blockMover;
-        this.blockRotator = blockRotator;
-    }
+    // Конструктор, который принимает зависимости
+
 
     void Awake( )
     {
-        // Создаем экземпляры зависимостей напрямую
         ITetrisGridManager gridManager = FindObjectOfType<TetrisGridManager> ();
 
         blockMover = new BlockMover ( gridManager );
         blockRotator = new BlockRotator ( gridManager );
+        
     }
 
     void Start( )
     {
         CalculateRotationPoint ();
-    }
-
-    void Update( )
-    {
-        HandleRotation ();
-        HandleFalling ();
+        StartCoroutine ( FallRoutine () ); // Запуск корутины для падения
     }
 
     private void HandleRotation( )
@@ -46,25 +38,41 @@ public class TetrisBlock : MonoBehaviour
         blockRotator.Rotate ( transform , RotationPoint );
     }
 
-    private void HandleFalling( )
+    private IEnumerator FallRoutine( )
     {
-        if ( Time.time - previousTime > fallTime )
+        while ( true )
         {
-            blockMover.Move ( Vector3.down , transform );
-            previousTime = Time.time;
+            yield return new WaitForSeconds ( fallTime ); // Ожидание перед следующим падением
 
-            if ( !blockMover.ValidMove ( transform ) )
+            // Проверка допустимости движения перед перемещением
+            if ( blockMover.ValidMove ( transform , Vector3.down ) )
             {
+                // Если движение допустимо, перемещаем блок вниз
+                yield return StartCoroutine ( blockMover.Move ( Vector3.down , transform ) );
+            }
+            else
+            {
+                // Если движение недопустимо, блок останавливается
                 BlockStopped ();
+
+                // Добавляем блок в сетку после остановки
+                ITetrisGridManager gridManager = FindObjectOfType<TetrisGridManager> ();
+                gridManager.AddToGrid ( transform );
+
+                Spawner.Instance.NewTetromino ();
+                yield break; // Останавливаем падение
             }
         }
     }
 
+
+
+
     private void BlockStopped( )
     {
         OnBlockStopped?.Invoke ();
-        OnNewTetrominoRequested?.Invoke ();
-        this.enabled = false;
+        OnNewTetrominoRequested?.Invoke (); // Запрос на создание нового тетромино
+        this.enabled = false; // Отключаем компонент после остановки
     }
 
     private void CalculateRotationPoint( )

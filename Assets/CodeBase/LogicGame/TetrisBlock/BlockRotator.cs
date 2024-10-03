@@ -13,7 +13,7 @@ public class BlockRotator : IBlockRotator
     {
         blockTransform.RotateAround ( rotationPoint , Vector3.forward , 90 );
 
-        if ( !gridManager.ValidMove ( blockTransform ) )
+        if ( !gridManager.ValidMove ( blockTransform, rotationPoint ) )
         {
             blockTransform.RotateAround ( rotationPoint , Vector3.forward , -90 );
         }
