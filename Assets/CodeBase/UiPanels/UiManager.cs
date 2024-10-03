@@ -7,6 +7,7 @@ public enum GamePanel
     StartPanel,
     EndPanel,
     PausePanel,
+    GameHudPanel,
     None // Для случаев, когда ни одна панель не активна
 }
 
@@ -15,7 +16,7 @@ public class UiManager : MonoBehaviour
     public UIPanel startPanel; // Ссылка на StartPanel
     public UIPanel endPanel;   // Ссылка на EndPanel
     public UIPanel pausePanel; // Ссылка на PausePanel
-
+    public UIPanel gameHudPanel;
     private GamePanel currentPanel = GamePanel.None; // Текущая активная панель
 
 
@@ -30,13 +31,16 @@ public class UiManager : MonoBehaviour
         switch ( panel )
         {
             case GamePanel.StartPanel:
-                startPanel.gameObject.SetActive ( true );
+                startPanel.Show ();
                 break;
             case GamePanel.EndPanel:
-                endPanel.gameObject.SetActive ( true );
+                endPanel.Show ();
                 break;
             case GamePanel.PausePanel:
-                pausePanel.gameObject.SetActive ( true );
+                pausePanel.Show ();
+                break; 
+            case GamePanel.GameHudPanel:
+                gameHudPanel.Show ();
                 break;
         }
 
@@ -47,9 +51,10 @@ public class UiManager : MonoBehaviour
     // Отключаем все панели
     private void HideAllPanels( )
     {
-        startPanel.gameObject.SetActive ( false );
-        endPanel.gameObject.SetActive ( false );
-        pausePanel.gameObject.SetActive ( false );
+        startPanel.Hide ();
+        endPanel.Hide ();
+        pausePanel.Hide ();
+        gameHudPanel.Hide ();
     }
 
     // Метод для скрытия всех панелей и установки текущего состояния в None

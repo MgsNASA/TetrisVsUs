@@ -5,16 +5,10 @@ public abstract class UIPanel : MonoBehaviour
 {
     public Button button;
     // Общий метод для показа панели
-    public virtual void Show( )
-    {
-        gameObject.SetActive ( true );
-        Debug.Log ( $"{GetType ().Name} показана" );
-    }
+    public abstract void Show( );
+
 
     // Общий метод для скрытия панели
-    public virtual void Hide( )
-    {
-        gameObject.SetActive ( false );
-        Debug.Log ( $"{GetType ().Name} скрыта" );
-    }
+    public abstract void Hide( );
+
 }

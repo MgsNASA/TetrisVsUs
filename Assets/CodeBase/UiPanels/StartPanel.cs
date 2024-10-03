@@ -4,10 +4,10 @@ public class StartPanel : UIPanel
 {
     public override void Show( )
     {
-        base.Show ();
+        gameObject.SetActive (true);
     }
     public override void Hide( )
     {
-        base.Hide ();
+       gameObject.SetActive(false);
     }
 }

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
 
-public class EndGamePanel : UIPanel
+using UnityEngine;
+
+public class GameHudPanel : UIPanel
 {
     public override void Show( )
     {
-       gameObject.SetActive( true );
+        gameObject.SetActive( true );
     }
     public override void Hide( )
     {
