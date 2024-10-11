@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
 {
     private static Spawner _instance;  // Статическая переменная для хранения единственного экземпляра
     private ITetrominoFactory _tetrominoFactory;
@@ -76,7 +76,6 @@ public class Spawner : MonoBehaviour
         Debug.LogWarning ( "Не удалось найти допустимую позицию для спавна тетромино!" );
     }
 
-
     private Vector3 GenerateNewPosition( )
     {
         int randomShift;
@@ -91,5 +90,36 @@ public class Spawner : MonoBehaviour
         while ( spawnPosition == lastSpawnPosition );
 
         return spawnPosition;
+    }
+
+    public void MoveSpawnerUp( float step )
+    {
+        Vector3 spawnerPosition = transform.position;
+        spawnerPosition.y += step; // Увеличиваем Y координату спаунера
+        transform.position = spawnerPosition;
+    }
+
+    public void StartClass( )
+    {
+        lastSpawnPosition = Vector3.zero;  // Сброс последней позиции спауна
+        Debug.Log ( "Spawner has started." );
+    }
+
+    public void Pause( )
+    {
+        // Логика для паузы, например, отключение спавна
+        Debug.Log ( "Spawner is paused." );
+    }
+
+    public void Resume( )
+    {
+        // Логика для возобновления, например, включение спавна
+        Debug.Log ( "Spawner has resumed." );
+    }
+
+    public void Restart( )
+    {
+        lastSpawnPosition = Vector3.zero;  // Сброс последней позиции спауна
+        Debug.Log ( "Spawner has restarted." );
     }
 }

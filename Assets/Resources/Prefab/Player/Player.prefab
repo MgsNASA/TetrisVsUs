@@ -4857,8 +4857,8 @@ Transform:
   m_GameObject: {fileID: 2654050545497834930}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.26, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalPosition: {x: 0, y: 0.13, z: 0}
+  m_LocalScale: {x: 46, y: 46, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5924849792032148636}
@@ -4984,6 +4984,7 @@ GameObject:
   - component: {fileID: 3888343107332078832}
   - component: {fileID: 5602008195688857179}
   - component: {fileID: 1547867642563276502}
+  - component: {fileID: 8110892362081162336}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5081,7 +5082,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0297513, y: -0.3196411}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -5092,7 +5093,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 8.4, y: 9.47}
+  m_Size: {x: 7.0452394, y: 9.826588}
   m_EdgeRadius: 0
 --- !u!114 &8946566123196186941
 MonoBehaviour:
@@ -5106,6 +5107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df4cb658ed2a685419c9d5d9e081f2b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpForce: 6
+  maxJumpCount: 2
 --- !u!114 &6790422507366003032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5119,11 +5122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterStats: {fileID: 11400000, guid: 09dce46470945b541942d8dfefd03196, type: 2}
-  groundCheck: {fileID: 4008056299340301810}
-  groundCheckRadius: 0.2
-  platformLayer:
-    serializedVersion: 2
-    m_Bits: 256
+  Transform: {fileID: 4008056299340301810}
 --- !u!114 &3888343107332078832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5136,7 +5135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 880d8c2185062c447802e26f56143c6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dust: {fileID: 0}
+  minX: 0
+  maxX: 0
+  dust: {fileID: 2315376731761525575}
   isFacingRight: 1
 --- !u!114 &5602008195688857179
 MonoBehaviour:
@@ -5208,3 +5209,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8110892362081162336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8152897202949481022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab153d7a5cf118c48bc6d0167c3dcad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 320

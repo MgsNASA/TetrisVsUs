@@ -24,7 +24,7 @@ public class TetrisBlock : MonoBehaviour
 
         blockMover = new BlockMover ( gridManager );
         blockRotator = new BlockRotator ( gridManager );
-        
+
     }
 
     void Start( )
@@ -33,10 +33,6 @@ public class TetrisBlock : MonoBehaviour
         StartCoroutine ( FallRoutine () ); // Запуск корутины для падения
     }
 
-    private void HandleRotation( )
-    {
-        blockRotator.Rotate ( transform , RotationPoint );
-    }
 
     private IEnumerator FallRoutine( )
     {

@@ -15,5 +15,8 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 300
   jumpCooldown: 1
-  minX: -10
-  maxX: 10
+  minX: 0.4
+  maxX: 9.6
+  canWalk: 1
+  canJump: 1
+  canDie: 1

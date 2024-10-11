@@ -4,7 +4,7 @@ public class GameLoopState : IState
 {
     private readonly GameStateMachine _stateMachine;
     private readonly IGameFactory _gameFactory;
-    
+    private  GameProcessController _gameProcessController;
     public GameLoopState( GameStateMachine stateMachine)
     {
         _stateMachine = stateMachine;
@@ -15,10 +15,11 @@ public class GameLoopState : IState
     {
         
         AllServices.Container.Single<IGameFactory> ().CreateObject ( "Prefab/Player/Player" );
-        AllServices.Container.Single<IGameFactory> ().CreateObject ( "Prefab/GameScriptsObjects/GameProcessController" );
-      //  _gameFactory.CreateObject ( "Prefabs/Player/Player.prefab" );
-        // Начало игрового процесса
-     
+        _gameProcessController =  AllServices.Container.Single<IGameFactory> ().CreateObject ( "Prefab/GameScriptsObjects/GameProcessController" ).GetComponent<GameProcessController>();
+        _gameProcessController.StartGame ();
+      //_gameFactory.CreateObject ( "Prefabs/Player/Player.prefab" );
+      // Начало игрового процесса
+
         Debug.Log ( "Game Started" );
         
         // Дополнительная логика, например, создание игрока и окружения

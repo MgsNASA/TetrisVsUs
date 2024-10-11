@@ -47,3 +47,4 @@ MonoBehaviour:
   uiManagerPrefab: {fileID: 4676181443546578469, guid: d105d9f8945c80647a9edd947aadad09, type: 3}
   spawnerPrefab: {fileID: 5900219266813079963, guid: c6403170a8fade74291900fdb705b25d, type: 3}
   tetrisGridManagerPrefab: {fileID: 5792320456825714138, guid: 4194056ca029676449bca020b19aac44, type: 3}
+  cameraControllerPrefab: {fileID: 66971030466923716, guid: fabfe9f3cb237e649aa3506531ded87a, type: 3}

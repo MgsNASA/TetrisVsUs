@@ -11,15 +11,19 @@ public enum GamePanel
     None // Для случаев, когда ни одна панель не активна
 }
 
-public class UiManager : MonoBehaviour
+public class UiManager : MonoBehaviour, IStateClass
 {
     public UIPanel startPanel; // Ссылка на StartPanel
     public UIPanel endPanel;   // Ссылка на EndPanel
     public UIPanel pausePanel; // Ссылка на PausePanel
     public UIPanel gameHudPanel;
     private GamePanel currentPanel = GamePanel.None; // Текущая активная панель
+    private VerticalMovementTracker verticalMovementTracker;
 
-
+    private void Awake( )
+    {
+        verticalMovementTracker = GetComponentInChildren<VerticalMovementTracker> ();
+    }
 
     // Метод для управления отображением панелей
     public void ShowPanel( GamePanel panel )
@@ -38,7 +42,7 @@ public class UiManager : MonoBehaviour
                 break;
             case GamePanel.PausePanel:
                 pausePanel.Show ();
-                break; 
+                break;
             case GamePanel.GameHudPanel:
                 gameHudPanel.Show ();
                 break;
@@ -62,5 +66,34 @@ public class UiManager : MonoBehaviour
     {
         HideAllPanels ();
         currentPanel = GamePanel.None;
+    }
+
+    public void StartClass( )
+    {
+        // Сброс состояния UI, показываем начальную панель
+        ShowPanel ( GamePanel.StartPanel );
+        Debug.Log ( "UI Manager has started." );
+    }
+
+    public void Pause( )
+    {
+        // Показываем панель паузы и скрываем HUD
+        ShowPanel ( GamePanel.PausePanel );
+        Debug.Log ( "Game is paused." );
+    }
+
+    public void Resume( )
+    {
+        // Скрываем панель паузы и показываем HUD
+        ShowPanel ( GamePanel.GameHudPanel );
+        Debug.Log ( "Game has resumed." );
+    }
+
+    public void Restart( )
+    {
+        // Скрываем все панели и показываем начальную панель
+        HideAllAndReset ();
+        ShowPanel ( GamePanel.StartPanel );
+        Debug.Log ( "Game has restarted." );
     }
 }

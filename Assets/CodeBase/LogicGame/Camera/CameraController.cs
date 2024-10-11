@@ -1,59 +1,77 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour, ICameraController, IStateClass
 {
-    public Camera Camera;
-    public Transform Player; // Ссылка на игрока
-    public Spawner Spawner; // Ссылка на спавнер
-    public float initialDistanceStep = 5.0f; // Начальное расстояние, на которое камера поднимется вверх
-    public float followThreshold = 10.0f; // Высота, на которой камера переместится
-    public float followSpeed = 2.0f; // Скорость плавного перемещения камеры
-    public float distanceMultiplier = 1.2f; // Множитель для увеличения расстояния
-    public float spawnerMoveStep = 10.0f; // Шаг перемещения спаунера по оси Y
+    [SerializeField] private float initialDistanceStep = 10.0f; // Движение каждые 10 единиц
+    [SerializeField] private float followSpeed = 2.0f;
+    [SerializeField] private float distanceMultiplier = 1.2f;
 
-    private float currentDistanceStep; // Текущее расстояние перемещения камеры
-    private float nextCameraY; // Следующее положение камеры по оси Y
+    private Spawner spawnerController;
+    private Camera mainCamera;
+    private float nextCameraY;
+    private Vector3 initialCameraPosition; // Хранит начальную позицию камеры
 
     private void Awake( )
     {
-        Camera = Camera.main;
-        currentDistanceStep = initialDistanceStep; // Инициализируем начальное расстояние
-        nextCameraY = Camera.transform.position.y; // Начальное положение камеры
-    }
+        mainCamera = Camera.main;
+        initialCameraPosition = mainCamera.transform.position; // Сохраняем начальную позицию
+        nextCameraY = initialCameraPosition.y;
+        spawnerController = Spawner.Instance.GetComponent<Spawner> ();
 
-    private void LateUpdate( )
-    {
-        if ( Player != null )
+        VerticalMovementTracker verticalMovementTracker = FindObjectOfType<VerticalMovementTracker> ();
+        if ( verticalMovementTracker != null )
         {
-            // Проверяем, достиг ли игрок уровня, когда камера должна подняться
-            if ( Player.position.y > nextCameraY + followThreshold )
-            {
-                // Увеличиваем положение камеры на фиксированное расстояние
-                nextCameraY += currentDistanceStep;
-
-                // Увеличиваем шаг на заданный множитель
-                currentDistanceStep *= distanceMultiplier;
-
-                // Перемещаем спавнер вверх на заданное количество единиц (например, 10)
-                MoveSpawnerUp ();
-            }
-
-            // Плавно перемещаем камеру к новой высоте
-            Vector3 newPosition = Camera.transform.position;
-            newPosition.y = Mathf.Lerp ( Camera.transform.position.y , nextCameraY , followSpeed * Time.deltaTime );
-
-            Camera.transform.position = newPosition;
+            VerticalMovementTracker.OnThresholdReached += MoveCameraUp;
+        }
+        else
+        {
+            Debug.LogError ( "VerticalMovementTracker не найден в сцене!" );
         }
     }
 
-    // Метод для перемещения спаунера
-    private void MoveSpawnerUp( )
+    private void OnDestroy( )
     {
-        if ( Spawner != null )
-        {
-            Vector3 spawnerPosition = Spawner.transform.position;
-            spawnerPosition.y += spawnerMoveStep; // Увеличиваем Y координату спаунера на 10
-            Spawner.transform.position = spawnerPosition;
-        }
+        VerticalMovementTracker.OnThresholdReached -= MoveCameraUp;
+    }
+
+    private void MoveCameraUp( int newThreshold )
+    {
+        nextCameraY = newThreshold;
+        spawnerController.MoveSpawnerUp ( initialDistanceStep );
+        initialDistanceStep *= distanceMultiplier;
+    }
+
+    private void Update( )
+    {
+        Vector3 newPosition = mainCamera.transform.position;
+        newPosition.y = Mathf.Lerp ( mainCamera.transform.position.y , nextCameraY , followSpeed * Time.deltaTime );
+        mainCamera.transform.position = newPosition;
+    }
+
+    public void FollowTarget( Transform target )
+    {
+        // Реализация, если потребуется
+    }
+
+    public void StartClass( )
+    {
+        // Дополнительная инициализация, если потребуется
+    }
+
+    public void Pause( )
+    {
+        // Логика паузы, если потребуется
+    }
+
+    public void Resume( )
+    {
+        // Логика возобновления, если потребуется
+    }
+
+    public void Restart( )
+    {
+        mainCamera.transform.position = initialCameraPosition; // Возвращаем камеру на начальную позицию
+        nextCameraY = initialCameraPosition.y; // Обновляем целевую позицию камеры
+        initialDistanceStep = 10.0f; // Сбрасываем шаг движения
     }
 }

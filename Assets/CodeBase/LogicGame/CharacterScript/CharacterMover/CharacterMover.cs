@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class CharacterMovу : MonoBehaviour, ICharacterMover
+public class CharacterMover : MonoBehaviour, ICharacterMover
 {
     private float moveSpeed;
+    [SerializeField]
     private float minX;
+    [SerializeField]
     private float maxX;
 
     // Добавляем переменные для направления и пыли

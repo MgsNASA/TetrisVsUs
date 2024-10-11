@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 
-public class GridOperations : IGridManager
+public class GridOperations : IGridManager, IStateClass
 {
-    private Transform [ , ] grid;  // Двумерный массив для хранения блоков
-    private int width;  // Ширина сетки
-    private int height;  // Высота сетки
-    private BlockFallAnimator fallAnimator;  // Аниматор падения блока
-    private Vector2 gridOffset;  // Смещение для сетки
+    private Transform [ , ] grid; // Двумерный массив для хранения блоков
+    private int width; // Ширина сетки
+    private int height; // Высота сетки
+    private BlockFallAnimator fallAnimator; // Аниматор падения блока
+    private Vector2 gridOffset; // Смещение для сетки
 
     public GridOperations( int width , int height , Vector2 offset )
     {
         this.width = width;
         this.height = height;
-        grid = new Transform [ width , height ];  // Инициализация массива для блоков
-        this.gridOffset = offset;  // Сохраняем смещение
+        grid = new Transform [ width , height ]; // Инициализация массива для блоков
+        this.gridOffset = offset; // Сохраняем смещение
     }
 
     // Добавление блока в сетку
@@ -30,14 +30,14 @@ public class GridOperations : IGridManager
             }
         }
 
-        CheckForLines ();  // Проверка на наличие полных линий
+        CheckForLines (); // Проверка на наличие полных линий
     }
 
     public bool ValidMove( Transform tetrisBlock , Vector3 direction )
     {
         foreach ( Transform child in tetrisBlock )
         {
-            Vector3 newPosition = child.position + direction;  // Рассчитываем новую позицию
+            Vector3 newPosition = child.position + direction; // Рассчитываем новую позицию
             int roundedX = Mathf.RoundToInt ( newPosition.x - gridOffset.x );
             int roundedY = Mathf.RoundToInt ( newPosition.y - gridOffset.y );
 
@@ -55,7 +55,6 @@ public class GridOperations : IGridManager
         }
         return true;
     }
-
 
     // Отрисовка сетки
     public void DrawGrid( Vector3 offset )
@@ -84,7 +83,7 @@ public class GridOperations : IGridManager
             {
                 DeleteLine ( y );
                 MoveLinesDown ( y );
-                y--;  // Проверяем ту же линию повторно после сдвига
+                y--; // Проверяем ту же линию повторно после сдвига
             }
         }
     }
@@ -96,10 +95,10 @@ public class GridOperations : IGridManager
         {
             if ( grid [ x , y ] == null )
             {
-                return false;  // Линия не полная
+                return false; // Линия не полная
             }
         }
-        return true;  // Линия полная
+        return true; // Линия полная
     }
 
     // Удаление полной линии
@@ -109,8 +108,8 @@ public class GridOperations : IGridManager
         {
             if ( grid [ x , y ] != null )
             {
-                GameObject.Destroy ( grid [ x , y ].gameObject );  // Удаление блока
-                grid [ x , y ] = null;  // Освобождение клетки в сетке
+                GameObject.Destroy ( grid [ x , y ].gameObject ); // Удаление блока
+                grid [ x , y ] = null; // Освобождение клетки в сетке
             }
         }
     }
@@ -135,10 +134,10 @@ public class GridOperations : IGridManager
                     if ( fallDistance > 0 )
                     {
                         Transform block = grid [ x , y ];
-                        grid [ x , y - fallDistance ] = block;  // Перемещение блока вниз
-                        grid [ x , y ] = null;  // Освобождение клетки в сетке
+                        grid [ x , y - fallDistance ] = block; // Перемещение блока вниз
+                        grid [ x , y ] = null; // Освобождение клетки в сетке
 
-                        BlockFall ( block , fallDistance );  // Используем анимацию падения
+                        BlockFall ( block , fallDistance ); // Используем анимацию падения
                     }
                 }
             }
@@ -153,7 +152,7 @@ public class GridOperations : IGridManager
             MonoBehaviour rootMono = block.GetComponentInParent<MonoBehaviour> ();
             if ( rootMono != null )
             {
-                rootMono.StartCoroutine ( fallAnimator.AnimateBlockFall ( block , fallDistance ) );  // Запуск анимации
+                rootMono.StartCoroutine ( fallAnimator.AnimateBlockFall ( block , fallDistance ) ); // Запуск анимации
             }
         }
     }
@@ -161,6 +160,68 @@ public class GridOperations : IGridManager
     // Проверка, что координаты внутри сетки
     private bool IsWithinBounds( int x , int y )
     {
-        return x >= 0 && x < width && y >= 0 && y < height;  // Проверка границ
+        return x >= 0 && x < width && y >= 0 && y < height; // Проверка границ
     }
+
+    public int [ ] GetColumnBlockCounts( )
+    {
+        int [ ] blockCounts = new int [ width ];
+
+        for ( int x = 0; x < width; x++ )
+        {
+            blockCounts [ x ] = 0;
+            for ( int y = 0; y < height; y++ )
+            {
+                if ( grid [ x , y ] != null )
+                {
+                    blockCounts [ x ]++;
+                }
+            }
+        }
+
+        return blockCounts;
+    }
+
+    public void ResetGrid( )
+    {
+        for ( int x = 0; x < width; x++ )
+        {
+            for ( int y = 0; y < height; y++ )
+            {
+                if ( grid [ x , y ] != null )
+                {
+                    GameObject.Destroy ( grid [ x , y ].gameObject ); // Удаляем блоки
+                    grid [ x , y ] = null; // Освобождаем клетку в сетке
+                }
+            }
+        }
+        Debug.Log ( "Grid has been reset." ); // Логируем сброс сетки
+    }
+
+    public void StartClass( )
+    {
+        // Инициализация состояния сетки
+        ResetGrid ();
+        Debug.Log ( "Grid Operations have started." );
+    }
+
+    public void Pause( )
+    {
+        // Логика паузы для сетки (например, отключение анимаций)
+        Debug.Log ( "Grid operations are paused." );
+    }
+
+    public void Resume( )
+    {
+        // Логика возобновления (например, включение анимаций)
+        Debug.Log ( "Grid operations have resumed." );
+    }
+
+    public void Restart( )
+    {
+        // Сброс сетки и повторная инициализация
+        ResetGrid ();
+        Debug.Log ( "Grid has been restarted." );
+    }
+
 }
