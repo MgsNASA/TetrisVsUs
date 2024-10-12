@@ -18,7 +18,7 @@ public class TetrisGridManager : MonoBehaviour, ITetrisGridManager, IStateClass
         isPaused = false;  // Изначально не в состоянии паузы
     }
 
-    public void AddToGrid( Transform tetrisBlock )
+    public void AddToGrid( GameObject tetrisBlock ) // Изменили Transform на GameObject
     {
         if ( _gridOperations == null )
         {
@@ -85,6 +85,7 @@ public class TetrisGridManager : MonoBehaviour, ITetrisGridManager, IStateClass
 
     public void Restart( )
     {
+        _gridOperations.ResetGrid ();
         // Логика для перезапуска
         _gridOperations = new GridOperations ( Width , Height , gridOffset ); // Сброс управления сеткой
         fallAnimator = new BlockFallAnimator ( 2.0f ); // Сброс аниматора

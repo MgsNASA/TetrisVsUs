@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class AnimationController : MonoBehaviour, IAnimationController
 {
     private const string _isWalking = "isWalking";
@@ -6,14 +7,19 @@ public class AnimationController : MonoBehaviour, IAnimationController
     private const string _isDying = "Die";
 
     public Animator animator;
+    private GameProcessController gameProcessController;
 
     private bool canWalk;
     private bool canJump;
     private bool canDie;
     private bool isCurrentlyJumping;
     private bool isCurrentlyWalking;
+    private bool isDying;
 
-
+    private void Start( )
+    {
+        gameProcessController = FindObjectOfType<GameProcessController> ();
+    }
 
     public void SetJumping( bool isJumping )
     {
@@ -35,9 +41,22 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
     public void SetDeath( )
     {
-        
+        if ( canDie && !isDying )
+        {
             animator.SetTrigger ( _isDying );
-        
+            isDying = true; // Устанавливаем флаг для состояния смерти
+            EndGame ();
+        }
+    }
+
+
+
+    private void EndGame( )
+    {
+        if ( gameProcessController != null )
+        {
+            gameProcessController.GameOver (); // Вызов метода окончания игры
+        }
     }
 
     public void OnCharacterDataChanged( CharacterStats stats )
@@ -49,10 +68,7 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
     void IAnimationController.UpdateAnimations( bool isGrounded , float horizontalInput )
     {
-        // Управляем анимацией ходьбы
         SetWalking ( horizontalInput != 0 && isGrounded );
-
-        // Управляем анимацией прыжка
         SetJumping ( !isGrounded );
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameProcessController : MonoBehaviour, IStateClass
@@ -7,45 +8,35 @@ public class GameProcessController : MonoBehaviour, IStateClass
     public GameObject spawnerPrefab;
     public GameObject tetrisGridManagerPrefab;
     public GameObject cameraControllerPrefab;
-
-    private UiManager _uiManager;
-    private Spawner _spawner;
-    private TetrisGridManager _tetrisGridManager;
-    private CameraController _cameraController;
+    public GameObject player;
+    private CharacterController _characterController;
+    public UiManager _uiManager;
+    public Spawner _spawner;
+    public TetrisGridManager _tetrisGridManager;
+    public CameraController _cameraController;
 
     // Список классов, реализующих интерфейс IStateClass
     private List<IStateClass> stateClasses = new List<IStateClass> ();
 
     public void StartGame( )
     {
+        player = AllServices.Container.Single<IGameFactory> ().CreateObject ( "Prefab/Player/Player" );
+        _characterController = player.GetComponent<CharacterController> ();
         // Создаем экземпляры из префабов
         _uiManager = Instantiate ( uiManagerPrefab , transform ).GetComponent<UiManager> ();
         _tetrisGridManager = Instantiate ( tetrisGridManagerPrefab ).GetComponent<TetrisGridManager> ();
         _spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
         _cameraController = Instantiate ( cameraControllerPrefab ).GetComponent<CameraController> ();
-
         // Инициализация спаунера через сервисы
         var tetrominoFactory = AllServices.Container.Single<ITetrominoFactory> ();
         var positionValidator = AllServices.Container.Single<IPositionValidator> ();
         var rotationManager = AllServices.Container.Single<IRotationManager> ();
-
-        // Проверка зависимостей
-        if ( tetrominoFactory == null || positionValidator == null || rotationManager == null )
-        {
-            Debug.LogError ( "Одна или несколько зависимостей не инициализированы!" );
-            return;
-        }
-
         _spawner.Initialize ( tetrominoFactory , positionValidator , rotationManager );
-
-        // Добавляем классы в список
-   
         stateClasses.Add ( _uiManager ); // Добавляем UI Manager (если он реализует IStateClass)
         stateClasses.Add ( _tetrisGridManager ); // Добавляем Tetris Grid Manager (если он реализует IStateClass)
         stateClasses.Add ( _spawner ); // Добавляем Spawner (если он реализует IStateClass)
         stateClasses.Add ( _cameraController ); // Добавляем Camera Controller (если он реализует IStateClass)
         _uiManager.ShowPanel ( GamePanel.StartPanel );
-        // StartClass ();
     }
 
     public void GameOver( )
@@ -101,7 +92,6 @@ public class GameProcessController : MonoBehaviour, IStateClass
         {
             stateClass.Restart (); // Вызов Restart для всех классов
         }
-
         // Вызов перезапуска игры
         Debug.Log ( "Restarting Game" );
         Time.timeScale = 0f;
@@ -119,12 +109,11 @@ public class GameProcessController : MonoBehaviour, IStateClass
             _uiManager.ShowPanel ( GamePanel.GameHudPanel );
         }
 
-        // Удаляем старые объекты и перезапускаем игру
-        Destroy ( _spawner.gameObject );
+
         Destroy ( _tetrisGridManager.gameObject );
         Destroy ( _cameraController.gameObject );
         Destroy ( _uiManager.gameObject );
-
-        StartGame (); // Перезапускаем игру
+        Destroy ( player );
+        StartGame ();
     }
 }

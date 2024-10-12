@@ -4,7 +4,7 @@ public class CameraController : MonoBehaviour, ICameraController, IStateClass
 {
     [SerializeField] private float initialDistanceStep = 10.0f; // Движение каждые 10 единиц
     [SerializeField] private float followSpeed = 2.0f;
-    [SerializeField] private float distanceMultiplier = 1.2f;
+    [SerializeField] private float distanceMultiplier = 20f;
 
     private Spawner spawnerController;
     private Camera mainCamera;
@@ -37,8 +37,8 @@ public class CameraController : MonoBehaviour, ICameraController, IStateClass
     private void MoveCameraUp( int newThreshold )
     {
         nextCameraY = newThreshold;
-        spawnerController.MoveSpawnerUp ( initialDistanceStep );
-        initialDistanceStep *= distanceMultiplier;
+        spawnerController.MoveSpawnerUp ( newThreshold);
+        initialDistanceStep += distanceMultiplier;
     }
 
     private void Update( )

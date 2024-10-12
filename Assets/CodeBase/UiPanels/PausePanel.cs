@@ -9,6 +9,7 @@ public class PausePanel : UIPanel
     {
         gameObject.SetActive ( true );
         resumeButton.onClick.AddListener ( OnResumeButtonClicked );
+        restartButton.onClick.AddListener ( OnRestartButtonClicked );   
     }
 
     public override void Hide( )
@@ -25,6 +26,6 @@ public class PausePanel : UIPanel
     private void OnRestartButtonClicked( )
     {
         // Возобновляем игру через GameProcessController
-        FindObjectOfType<GameProcessController> ().Resume ();
+        FindObjectOfType<GameProcessController> ().Restart ();
     }
 }

@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GridOperations : IGridManager, IStateClass
 {
-    private Transform [ , ] grid; // Двумерный массив для хранения блоков
+    private GameObject [ , ] grid; // Двумерный массив для хранения объектов
+    private List<GameObject> storedObjects; // Список для хранения объектов
     private int width; // Ширина сетки
     private int height; // Высота сетки
     private BlockFallAnimator fallAnimator; // Аниматор падения блока
@@ -12,13 +14,15 @@ public class GridOperations : IGridManager, IStateClass
     {
         this.width = width;
         this.height = height;
-        grid = new Transform [ width , height ]; // Инициализация массива для блоков
+        grid = new GameObject [ width , height ]; // Инициализация массива для объектов
+        storedObjects = new List<GameObject> (); // Инициализация списка
         this.gridOffset = offset; // Сохраняем смещение
     }
 
     // Добавление блока в сетку
-    public void AddToGrid( Transform tetrisBlock )
+    public void AddToGrid( GameObject obj )
     {
+        Transform tetrisBlock = obj.transform; // Получаем Transform из объекта
         foreach ( Transform child in tetrisBlock )
         {
             int roundedX = Mathf.RoundToInt ( child.position.x - gridOffset.x );
@@ -26,7 +30,8 @@ public class GridOperations : IGridManager, IStateClass
 
             if ( IsWithinBounds ( roundedX , roundedY ) )
             {
-                grid [ roundedX , roundedY ] = child;
+                grid [ roundedX , roundedY ] = obj; // Сохраняем объект в сетке
+                storedObjects.Add ( obj ); // Добавляем объект в список
             }
         }
 
@@ -108,7 +113,7 @@ public class GridOperations : IGridManager, IStateClass
         {
             if ( grid [ x , y ] != null )
             {
-                GameObject.Destroy ( grid [ x , y ].gameObject ); // Удаление блока
+                GameObject.Destroy ( grid [ x , y ] ); // Удаление блока
                 grid [ x , y ] = null; // Освобождение клетки в сетке
             }
         }
@@ -133,19 +138,19 @@ public class GridOperations : IGridManager, IStateClass
 
                     if ( fallDistance > 0 )
                     {
-                        Transform block = grid [ x , y ];
+                        GameObject block = grid [ x , y ]; // Получаем GameObject
                         grid [ x , y - fallDistance ] = block; // Перемещение блока вниз
                         grid [ x , y ] = null; // Освобождение клетки в сетке
 
-                        BlockFall ( block , fallDistance ); // Используем анимацию падения
+                        BlockFall ( block.transform , fallDistance ); // Используем анимацию падения
                     }
                 }
             }
         }
     }
 
-    // Метод для анимации падения блока
-    private void BlockFall( Transform block , int fallDistance )
+            // Метод для анимации падения блока
+            private void BlockFall( Transform block , int fallDistance )
     {
         if ( fallAnimator != null )
         {
@@ -181,22 +186,16 @@ public class GridOperations : IGridManager, IStateClass
 
         return blockCounts;
     }
-
     public void ResetGrid( )
     {
-        for ( int x = 0; x < width; x++ )
+        foreach ( var obj in storedObjects )
         {
-            for ( int y = 0; y < height; y++ )
-            {
-                if ( grid [ x , y ] != null )
-                {
-                    GameObject.Destroy ( grid [ x , y ].gameObject ); // Удаляем блоки
-                    grid [ x , y ] = null; // Освобождаем клетку в сетке
-                }
-            }
+            GameObject.Destroy ( obj ); // Удаляем объекты
         }
+        storedObjects.Clear (); // Очищаем список
         Debug.Log ( "Grid has been reset." ); // Логируем сброс сетки
     }
+
 
     public void StartClass( )
     {

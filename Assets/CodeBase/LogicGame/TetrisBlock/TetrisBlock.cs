@@ -53,7 +53,7 @@ public class TetrisBlock : MonoBehaviour
 
                 // Добавляем блок в сетку после остановки
                 ITetrisGridManager gridManager = FindObjectOfType<TetrisGridManager> ();
-                gridManager.AddToGrid ( transform );
+                gridManager.AddToGrid ( gameObject );
 
                 Spawner.Instance.NewTetromino ();
                 yield break; // Останавливаем падение
