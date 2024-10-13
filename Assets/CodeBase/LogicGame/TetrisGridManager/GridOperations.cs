@@ -30,13 +30,14 @@ public class GridOperations : IGridManager, IStateClass
 
             if ( IsWithinBounds ( roundedX , roundedY ) )
             {
-                grid [ roundedX , roundedY ] = obj; // Сохраняем объект в сетке
-                storedObjects.Add ( obj ); // Добавляем объект в список
+                grid [ roundedX , roundedY ] = child.gameObject; // Сохраняем дочерний объект в сетке
+                storedObjects.Add ( child.gameObject ); // Добавляем каждый дочерний объект в список
             }
         }
 
         CheckForLines (); // Проверка на наличие полных линий
     }
+
 
     public bool ValidMove( Transform tetrisBlock , Vector3 direction )
     {
@@ -190,11 +191,15 @@ public class GridOperations : IGridManager, IStateClass
     {
         foreach ( var obj in storedObjects )
         {
-            GameObject.Destroy ( obj ); // Удаляем объекты
+            if ( obj != null )
+            {
+                GameObject.Destroy ( obj ); // Удаляем объекты
+            }
         }
         storedObjects.Clear (); // Очищаем список
         Debug.Log ( "Grid has been reset." ); // Логируем сброс сетки
     }
+
 
 
     public void StartClass( )

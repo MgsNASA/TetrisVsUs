@@ -24,6 +24,7 @@ public class GameProcessController : MonoBehaviour, IStateClass
         _characterController = player.GetComponent<CharacterController> ();
         // Создаем экземпляры из префабов
         _uiManager = Instantiate ( uiManagerPrefab , transform ).GetComponent<UiManager> ();
+        _uiManager.Initialize (player,this);
         _tetrisGridManager = Instantiate ( tetrisGridManagerPrefab ).GetComponent<TetrisGridManager> ();
         _spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
         _cameraController = Instantiate ( cameraControllerPrefab ).GetComponent<CameraController> ();
@@ -36,7 +37,9 @@ public class GameProcessController : MonoBehaviour, IStateClass
         stateClasses.Add ( _tetrisGridManager ); // Добавляем Tetris Grid Manager (если он реализует IStateClass)
         stateClasses.Add ( _spawner ); // Добавляем Spawner (если он реализует IStateClass)
         stateClasses.Add ( _cameraController ); // Добавляем Camera Controller (если он реализует IStateClass)
-        _uiManager.ShowPanel ( GamePanel.StartPanel );
+        _spawner.Restart ();
+
+   
     }
 
     public void GameOver( )
@@ -56,7 +59,7 @@ public class GameProcessController : MonoBehaviour, IStateClass
             stateClass.StartClass (); // Вызов StartClass для всех классов
         }
 
-        _uiManager.HideAllAndReset ();
+        _uiManager.HideAllPanels ();
         _uiManager.ShowPanel ( GamePanel.GameHudPanel );
         _spawner.NewTetromino ();
     }
@@ -81,7 +84,7 @@ public class GameProcessController : MonoBehaviour, IStateClass
             stateClass.Resume (); // Вызов Resume для всех классов
         }
 
-        _uiManager.HideAllAndReset ();
+        _uiManager.HideAllPanels ();
         _uiManager.ShowPanel ( GamePanel.GameHudPanel );
         Time.timeScale = 1f; // Возвращаем время в нормальный ход для снятия паузы
     }
@@ -105,14 +108,14 @@ public class GameProcessController : MonoBehaviour, IStateClass
         // Перезапускаем UI
         if ( _uiManager != null )
         {
-            _uiManager.HideAllAndReset ();
+            _uiManager.HideAllPanels ();
             _uiManager.ShowPanel ( GamePanel.GameHudPanel );
         }
 
-
+        Destroy (_spawner);
         Destroy ( _tetrisGridManager.gameObject );
         Destroy ( _cameraController.gameObject );
-        Destroy ( _uiManager.gameObject );
+        Destroy (_uiManager.gameObject );
         Destroy ( player );
         StartGame ();
     }

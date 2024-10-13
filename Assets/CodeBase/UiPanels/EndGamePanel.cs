@@ -20,6 +20,6 @@ public class EndGamePanel : UIPanel
     private void OnRestartButtonClicked( )
     {
         // Рестарт игры через GameProcessController
-        FindObjectOfType<GameProcessController> ().StartClass ();
+        FindObjectOfType<GameProcessController> ().Restart ();
     }
 }

@@ -9,13 +9,15 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
     private int previousThreshold = 0; // Переменная для отслеживания предыдущей отметки
     private bool isPaused = false;  // Флаг для отслеживания состояния паузы
 
+    public void Initialize( GameObject player )
+    {
+        this.player = player;
+    }
+
     public delegate void ThresholdReached( int threshold );
     public static event ThresholdReached OnThresholdReached;
 
-    public void Awake( )
-    {
-        player = GameObject.Find ( "Player(Clone)" );
-    }
+
 
     private void Update( )
     {
@@ -55,6 +57,7 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
         previousThreshold = 0;  // Сброс предыдущей отметки
         isPaused = false;       // Убедитесь, что менеджер не в состоянии паузы
         Debug.Log ( "VerticalMovementTracker has started." );
+
     }
 
     public void Pause( )
@@ -74,5 +77,6 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
         previousThreshold = 0;  // Сброс предыдущей отметки
         isPaused = false;       // Убедитесь, что менеджер не в состоянии паузы
         Debug.Log ( "VerticalMovementTracker has restarted." );
+    
     }
 }

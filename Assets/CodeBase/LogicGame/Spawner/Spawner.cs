@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
@@ -8,6 +9,8 @@ public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
     private IRotationManager _rotationManager;
     private Vector3 lastSpawnPosition;
     public int maxSpawnShift = 4;
+
+    private List<GameObject> spawnedTetrominos = new List<GameObject> (); // Список для отслеживания созданных объектов
 
     // Свойство для доступа к экземпляру синглтона
     public static Spawner Instance
@@ -24,12 +27,7 @@ public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
 
     private void Awake( )
     {
-        // Проверяем, есть ли уже экземпляр
-        if ( _instance != null && _instance != this )
-        {
-            Destroy ( gameObject );  // Удаляем дубликат
-            return;
-        }
+  
 
         _instance = this;  // Устанавливаем экземпляр
         DontDestroyOnLoad ( gameObject );  // Сохраняем объект между сценами
@@ -65,6 +63,7 @@ public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
             if ( _positionValidator.ValidMove ( newTetromino.transform , Vector3.down ) )
             {
                 lastSpawnPosition = spawnPosition;
+                spawnedTetrominos.Add ( newTetromino ); // Добавляем объект в список
                 return;
             }
             else
@@ -99,6 +98,20 @@ public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
         transform.position = spawnerPosition;
     }
 
+    // Метод для очистки всех созданных тетромино
+    public void ClearAllTetrominos( )
+    {
+        foreach ( var tetromino in spawnedTetrominos )
+        {
+            if ( tetromino != null )
+            {
+                Destroy ( tetromino );
+            }
+        }
+        spawnedTetrominos.Clear (); // Очищаем список после удаления
+        Debug.Log ( "Все созданные тетромино были удалены." );
+    }
+
     public void StartClass( )
     {
         lastSpawnPosition = Vector3.zero;  // Сброс последней позиции спауна
@@ -119,6 +132,7 @@ public class Spawner : MonoBehaviour, ISpawnerController, IStateClass
 
     public void Restart( )
     {
+        ClearAllTetrominos (); // Удаляем все созданные объекты перед перезапуском
         lastSpawnPosition = Vector3.zero;  // Сброс последней позиции спауна
         Debug.Log ( "Spawner has restarted." );
     }

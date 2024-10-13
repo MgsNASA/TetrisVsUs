@@ -20,31 +20,54 @@ public class UiManager : MonoBehaviour, IStateClass
     private GamePanel currentPanel = GamePanel.None; // Текущая активная панель
     private VerticalMovementTracker verticalMovementTracker;
 
+    public void Initialize( GameObject player , GameProcessController gameProcessController )
+    {
+        startPanel = GetComponentInChildren<StartPanel> ();
+        endPanel = GetComponentInChildren<EndGamePanel> ();
+        gameHudPanel = GetComponentInChildren<GameHudPanel> ();
+        pausePanel = GetComponentInChildren<PausePanel> ();
+        verticalMovementTracker = GetComponentInChildren<VerticalMovementTracker> ();
+
+        // Инициализация панелей с GameProcessController
+        startPanel.Initialize ( gameProcessController );
+        endPanel.Initialize ( gameProcessController );
+        gameHudPanel.Initialize ( gameProcessController );
+        pausePanel.Initialize ( gameProcessController );
+
+        // Инициализация VerticalMovementTracker
+        verticalMovementTracker.Initialize ( player );
+        ShowPanel ( GamePanel.StartPanel );
+    }
+
     private void Awake( )
     {
         verticalMovementTracker = GetComponentInChildren<VerticalMovementTracker> ();
+       
     }
 
-    // Метод для управления отображением панелей
     public void ShowPanel( GamePanel panel )
     {
         // Отключаем все панели
         HideAllPanels ();
 
-        // Включаем нужную панель
+        // Проверяем и активируем нужную панель
         switch ( panel )
         {
             case GamePanel.StartPanel:
-                startPanel.Show ();
+                if ( !IsDestroyed ( startPanel ) )
+                    startPanel.Show ();
                 break;
             case GamePanel.EndPanel:
-                endPanel.Show ();
+                if ( !IsDestroyed ( endPanel ) )
+                    endPanel.Show ();
                 break;
             case GamePanel.PausePanel:
-                pausePanel.Show ();
+                if ( !IsDestroyed ( pausePanel ) )
+                    pausePanel.Show ();
                 break;
             case GamePanel.GameHudPanel:
-                gameHudPanel.Show ();
+                if ( !IsDestroyed ( gameHudPanel ) )
+                    gameHudPanel.Show ();
                 break;
         }
 
@@ -52,21 +75,28 @@ public class UiManager : MonoBehaviour, IStateClass
         currentPanel = panel;
     }
 
+
     // Отключаем все панели
-    private void HideAllPanels( )
+    public void HideAllPanels( )
     {
-        startPanel.Hide ();
-        endPanel.Hide ();
-        pausePanel.Hide ();
-        gameHudPanel.Hide ();
+        if ( !IsDestroyed ( startPanel ) )
+            startPanel.Hide ();
+        if ( !IsDestroyed ( endPanel ) )
+            endPanel.Hide ();
+        if ( !IsDestroyed ( pausePanel ) )
+            pausePanel.Hide ();
+        if ( !IsDestroyed ( gameHudPanel ) )
+            gameHudPanel.Hide ();
     }
 
-    // Метод для скрытия всех панелей и установки текущего состояния в None
-    public void HideAllAndReset( )
+
+    private bool IsDestroyed( Object obj )
     {
-        HideAllPanels ();
-        currentPanel = GamePanel.None;
+        return obj == null || obj.Equals ( null );
     }
+
+
+
 
     public void StartClass( )
     {
@@ -79,6 +109,7 @@ public class UiManager : MonoBehaviour, IStateClass
     {
         // Показываем панель паузы и скрываем HUD
         ShowPanel ( GamePanel.PausePanel );
+        verticalMovementTracker.Pause ();
         Debug.Log ( "Game is paused." );
     }
 
@@ -87,13 +118,17 @@ public class UiManager : MonoBehaviour, IStateClass
         // Скрываем панель паузы и показываем HUD
         ShowPanel ( GamePanel.GameHudPanel );
         Debug.Log ( "Game has resumed." );
+        verticalMovementTracker.Resume ();
     }
 
     public void Restart( )
     {
         // Скрываем все панели и показываем начальную панель
-        HideAllAndReset ();
+        HideAllPanels ();
         ShowPanel ( GamePanel.StartPanel );
         Debug.Log ( "Game has restarted." );
+        verticalMovementTracker.Restart ();
     }
+
+
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class StartPanel : UIPanel
 {
+   
     public override void Show( )
     {
         gameObject.SetActive ( true );
@@ -12,12 +13,11 @@ public class StartPanel : UIPanel
     public override void Hide( )
     {
         gameObject.SetActive ( false );
-        button.onClick.RemoveListener ( OnStartButtonClicked );
+      //  button.onClick.RemoveListener ( OnStartButtonClicked );
     }
 
     private void OnStartButtonClicked( )
     {
-        // Здесь мы вызываем метод StartGame у GameProcessController
-        FindObjectOfType<GameProcessController> ().StartClass ();
+        gameProcessController.StartClass ();
     }
 }
