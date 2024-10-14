@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialDistanceStep: 3
-  followThreshold: 2
   followSpeed: 2
   distanceMultiplier: 1.2
+  shakeDuration: 0.5
+  shakeMagnitude: 0.2
+  shakeSound: {fileID: 8300000, guid: e0ba7068dbb3ed34d8f883461843dc63, type: 3}
+  audioSource: {fileID: 0}

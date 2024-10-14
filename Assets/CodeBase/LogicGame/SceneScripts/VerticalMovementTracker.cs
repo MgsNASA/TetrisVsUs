@@ -7,6 +7,7 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
     public GameObject player;
 
     private int previousThreshold = 0; // Переменная для отслеживания предыдущей отметки
+    [SerializeField]
     private bool isPaused = false;  // Флаг для отслеживания состояния паузы
 
     public void Initialize( GameObject player )
@@ -37,11 +38,13 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
         if ( roundedYPosition >= previousThreshold + 10 )
         {
             previousThreshold += 10; // Обновляем предыдущую отметку
+            Debug.Log ( $"Threshold Reached: {previousThreshold}" ); // Лог для отладки
 
             // Сообщаем другим скриптам о достижении новой высоты
             OnThresholdReached?.Invoke ( previousThreshold );
         }
     }
+
 
     // Метод для обновления текста на экране
     private void UpdateText( int currentYPosition )

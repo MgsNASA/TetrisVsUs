@@ -31,6 +31,7 @@ public class GameProcessController : MonoBehaviour, IStateClass
         _spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
         _musicService = Instantiate ( musicSerivcePrefab ).GetComponent<MusicService> ();
         _cameraController = Instantiate ( cameraControllerPrefab ).GetComponent<CameraController> ();
+        _cameraController.Initialize ( _uiManager.GetComponent<VerticalMovementTracker>());
         // Инициализация спаунера через сервисы
         var tetrominoFactory = AllServices.Container.Single<ITetrominoFactory> ();
         var positionValidator = AllServices.Container.Single<IPositionValidator> ();

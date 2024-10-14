@@ -18,9 +18,10 @@ public class UiManager : MonoBehaviour, IStateClass
     public UIPanel pausePanel; // Ссылка на PausePanel
     public UIPanel gameHudPanel;
     private GamePanel currentPanel = GamePanel.None; // Текущая активная панель
-    private VerticalMovementTracker verticalMovementTracker;
+    public VerticalMovementTracker verticalMovementTracker;
+    internal object VerticalMovementTracker;
 
-    public void Initialize( GameObject player , GameProcessController gameProcessController )
+    public void Initialize( GameObject player , GameProcessController gameProcessController)
     {
         startPanel = GetComponentInChildren<StartPanel> ();
         endPanel = GetComponentInChildren<EndGamePanel> ();

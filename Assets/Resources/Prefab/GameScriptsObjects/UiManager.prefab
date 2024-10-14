@@ -854,6 +854,7 @@ MonoBehaviour:
   endPanel: {fileID: 7297718962883492335}
   pausePanel: {fileID: 8879764524300728949}
   gameHudPanel: {fileID: 1002638167362236206}
+  verticalMovementTracker: {fileID: 0}
 --- !u!1 &5558029508677111733
 GameObject:
   m_ObjectHideFlags: 0
@@ -1718,10 +1719,10 @@ RectTransform:
   - {fileID: 4895518749626457458}
   m_Father: {fileID: 4212238607795270875}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -113.71}
-  m_SizeDelta: {x: 0, y: 227.427}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -0.000061035, y: -89.22107}
+  m_SizeDelta: {x: 1080, y: 178.4421}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5556184715670708569
 CanvasRenderer:
@@ -1867,6 +1868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textMeshProUGUI: {fileID: 4845879851165628514}
   player: {fileID: 0}
+  isPaused: 0
 --- !u!1 &8834202647598577576
 GameObject:
   m_ObjectHideFlags: 0
