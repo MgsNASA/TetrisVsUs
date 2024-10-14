@@ -48,7 +48,7 @@ public class VerticalMovementTracker : MonoBehaviour, IStateClass
     {
         if ( textMeshProUGUI != null )
         {
-            textMeshProUGUI.text = $"Current Y Position: {currentYPosition} units";
+            textMeshProUGUI.text = $"Current {currentYPosition} height";
         }
     }
 

@@ -69,7 +69,15 @@ public class TetrisBlock : MonoBehaviour
         OnBlockStopped?.Invoke ();
         OnNewTetrominoRequested?.Invoke (); // Запрос на создание нового тетромино
         this.enabled = false; // Отключаем компонент после остановки
+
+        // Ищем CameraController и вызываем быстрое дрожание
+        CameraController cameraController = FindObjectOfType<CameraController> ();
+        if ( cameraController != null )
+        {
+            cameraController.TriggerCameraShake ( 0.2f , 0.4f ); // Быстрое дрожание (короткая длительность и высокая амплитуда)
+        }
     }
+
 
     private void CalculateRotationPoint( )
     {
