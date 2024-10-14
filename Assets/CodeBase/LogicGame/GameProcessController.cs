@@ -9,11 +9,13 @@ public class GameProcessController : MonoBehaviour, IStateClass
     public GameObject tetrisGridManagerPrefab;
     public GameObject cameraControllerPrefab;
     public GameObject player;
+    public GameObject musicSerivcePrefab;
     private CharacterController _characterController;
     public UiManager _uiManager;
     public Spawner _spawner;
     public TetrisGridManager _tetrisGridManager;
     public CameraController _cameraController;
+    public MusicService _musicService;
 
     // Список классов, реализующих интерфейс IStateClass
     private List<IStateClass> stateClasses = new List<IStateClass> ();
@@ -27,6 +29,7 @@ public class GameProcessController : MonoBehaviour, IStateClass
         _uiManager.Initialize (player,this);
         _tetrisGridManager = Instantiate ( tetrisGridManagerPrefab ).GetComponent<TetrisGridManager> ();
         _spawner = Instantiate ( spawnerPrefab ).GetComponent<Spawner> ();
+        _musicService = Instantiate ( musicSerivcePrefab ).GetComponent<MusicService> ();
         _cameraController = Instantiate ( cameraControllerPrefab ).GetComponent<CameraController> ();
         // Инициализация спаунера через сервисы
         var tetrominoFactory = AllServices.Container.Single<ITetrominoFactory> ();
@@ -37,6 +40,8 @@ public class GameProcessController : MonoBehaviour, IStateClass
         stateClasses.Add ( _tetrisGridManager ); // Добавляем Tetris Grid Manager (если он реализует IStateClass)
         stateClasses.Add ( _spawner ); // Добавляем Spawner (если он реализует IStateClass)
         stateClasses.Add ( _cameraController ); // Добавляем Camera Controller (если он реализует IStateClass)
+        _musicService.currentTrackIndex = 0;
+        _musicService.PlayMusic ();
         _spawner.Restart ();
 
    
@@ -53,6 +58,10 @@ public class GameProcessController : MonoBehaviour, IStateClass
     {
         Debug.Log ( "StartGame" );
         Time.timeScale = 1f; // Возвращаем нормальную скорость времени при старте игры
+
+        // Включаем первый трек (индекс 0)
+        _musicService.currentTrackIndex = 1;
+        _musicService.PlayMusic ();
 
         foreach ( var stateClass in stateClasses )
         {
@@ -86,6 +95,11 @@ public class GameProcessController : MonoBehaviour, IStateClass
 
         _uiManager.HideAllPanels ();
         _uiManager.ShowPanel ( GamePanel.GameHudPanel );
+
+        // Включаем второй трек (индекс 1) при возобновлении игры
+        _musicService.currentTrackIndex = 1;
+        _musicService.PlayMusic ();
+
         Time.timeScale = 1f; // Возвращаем время в нормальный ход для снятия паузы
     }
 
@@ -111,12 +125,13 @@ public class GameProcessController : MonoBehaviour, IStateClass
             _uiManager.HideAllPanels ();
             _uiManager.ShowPanel ( GamePanel.GameHudPanel );
         }
-
+        Time.timeScale = 1f; // Возвращаем время в нормальный ход для снятия паузы
         Destroy (_spawner);
         Destroy ( _tetrisGridManager.gameObject );
         Destroy ( _cameraController.gameObject );
         Destroy (_uiManager.gameObject );
         Destroy ( player );
+        Destroy(_musicService.gameObject );
         StartGame ();
     }
 }

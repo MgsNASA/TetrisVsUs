@@ -48,3 +48,10 @@ MonoBehaviour:
   spawnerPrefab: {fileID: 5900219266813079963, guid: c6403170a8fade74291900fdb705b25d, type: 3}
   tetrisGridManagerPrefab: {fileID: 5792320456825714138, guid: 4194056ca029676449bca020b19aac44, type: 3}
   cameraControllerPrefab: {fileID: 66971030466923716, guid: fabfe9f3cb237e649aa3506531ded87a, type: 3}
+  player: {fileID: 0}
+  musicSerivcePrefab: {fileID: 143821704529337586, guid: feb960c47d47d1f4a8cdb0d839797570, type: 3}
+  _uiManager: {fileID: 0}
+  _spawner: {fileID: 0}
+  _tetrisGridManager: {fileID: 0}
+  _cameraController: {fileID: 0}
+  _musicService: {fileID: 0}

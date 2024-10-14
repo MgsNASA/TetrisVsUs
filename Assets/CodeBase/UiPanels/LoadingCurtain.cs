@@ -24,10 +24,10 @@ public class LoadingCurtain : MonoBehaviour
     {
         while ( Curtain.alpha > 0 )
         {
-            Curtain.alpha -= 0.03f;
-            yield return new WaitForSeconds ( 0.03f );
+            Curtain.alpha -= 0.1f; // Увеличьте значение для ускорения затемнения
+            yield return new WaitForSeconds ( 0.01f ); // Уменьшите интервал для более плавного и быстрого затемнения
         }
-        // Перемещаем отключение после завершения цикла
         gameObject.SetActive ( false );
     }
+
 }

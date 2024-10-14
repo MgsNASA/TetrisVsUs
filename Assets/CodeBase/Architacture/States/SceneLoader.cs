@@ -27,11 +27,24 @@ public class SceneLoader : MonoBehaviour
 
         // Запускаем асинхронную загрузку сцены
         AsyncOperation waitNextScene = SceneManager.LoadSceneAsync ( nextScene );
+        waitNextScene.allowSceneActivation = false; // Отключаем автоматическую активацию сцены
 
-        // Ожидаем завершения загрузки
-        while ( !waitNextScene.isDone )
+        float elapsedTime = 0f;
+        float minimumLoadTime = 10f; // Минимальное время загрузки в секундах
+
+        // Ожидаем завершения загрузки или выполнения минимального времени
+        while ( !waitNextScene.isDone || elapsedTime < minimumLoadTime )
         {
-            Debug.Log ( $"Loading {nextScene}... Progress: {waitNextScene.progress * 100}%" );
+            Debug.Log ( $"Loading {nextScene}... Progress: {waitNextScene.progress * 100}% | Elapsed Time: {elapsedTime}" );
+
+            elapsedTime += Time.deltaTime;
+
+            // Если загрузка завершена, но прошло меньше 10 секунд, ждем
+            if ( waitNextScene.progress >= 0.9f && elapsedTime >= minimumLoadTime )
+            {
+                waitNextScene.allowSceneActivation = true; // Активируем сцену только когда выполнено минимальное время
+            }
+
             yield return null;
         }
 
@@ -49,4 +62,5 @@ public class SceneLoader : MonoBehaviour
         // Вызываем коллбэк, если он существует
         onLoaded?.Invoke ();
     }
+
 }

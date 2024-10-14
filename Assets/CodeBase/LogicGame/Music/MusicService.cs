@@ -9,22 +9,11 @@ public class MusicService : MonoBehaviour
 
     public AudioSource audioSource; // Компонент AudioSource для проигрывания музыки
     public AudioClip [ ] musicTracks; // Массив треков музыки
-    private int currentTrackIndex = 0; // Индекс текущего трека
+    public int currentTrackIndex = 0; // Индекс текущего трека
 
     public float musicVolume = 1f; // Громкость музыки
 
-    private void Awake( )
-    {
-        if ( Instance == null )
-        {
-            Instance = this;
-            DontDestroyOnLoad ( gameObject ); // Сохраняем объект между сценами
-        }
-        else
-        {
-            Destroy ( gameObject ); // Уничтожаем дублирующий объект
-        }
-    }
+
 
     private void Start( )
     {
