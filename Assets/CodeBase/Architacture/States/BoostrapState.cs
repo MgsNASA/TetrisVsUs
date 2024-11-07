@@ -25,7 +25,7 @@ public class BootstrapState : IState
     private void RegisterService( )
     {
         // Регистрируем IInputService
-        // _services.RegisterSingle<IInputService> ( new InputService () );
+        _services.RegisterSingle<IInputService> (  InputService () );
 
         // Регистрируем IAssetProvider
         _services.RegisterSingle<IAssetProvider> ( new AssetProvider () );

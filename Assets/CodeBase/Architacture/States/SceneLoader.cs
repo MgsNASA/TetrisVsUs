@@ -30,7 +30,7 @@ public class SceneLoader : MonoBehaviour
         waitNextScene.allowSceneActivation = false; // Отключаем автоматическую активацию сцены
 
         float elapsedTime = 0f;
-        float minimumLoadTime = 10f; // Минимальное время загрузки в секундах
+        float minimumLoadTime = 5f; // Минимальное время загрузки в секундах
 
         // Ожидаем завершения загрузки или выполнения минимального времени
         while ( !waitNextScene.isDone || elapsedTime < minimumLoadTime )
